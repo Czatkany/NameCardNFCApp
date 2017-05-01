@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/nameCardListElement"
+    android:scaleType="fitStart"
+    >
+    <Button
+        android:id="@+id/openCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open"
+        >
+    </Button>
+    <TextView
+        android:id="@+id/cardName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/openCard"
+        android:layout_alignBottom="@+id/openCard"
+        android:layout_toEndOf="@+id/openCard"
+        android:layout_marginStart="140dp" />
+</RelativeLayout>
