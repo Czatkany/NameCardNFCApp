@@ -62,7 +62,7 @@ public class SendCardActivity extends AppCompatActivity {
         nfcAdapter.setNdefPushMessage(new NdefMessage(
                 new NdefRecord[]{newTextRecord(intent.getStringExtra("cardParam"), Locale.ENGLISH, true)}), this);
     }
-//
+
     public static NdefRecord newTextRecord(String text, Locale locale, boolean encodeInUtf8) {
         byte[] langBytes = locale.getLanguage().getBytes(Charset.forName("US-ASCII"));
 
