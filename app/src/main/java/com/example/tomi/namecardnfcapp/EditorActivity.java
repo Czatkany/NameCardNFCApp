@@ -1,6 +1,7 @@
 package com.example.tomi.namecardnfcapp;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
 import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
+
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,21 +40,40 @@ public class EditorActivity extends AppCompatActivity {
     private OnTouchListener touchListener;
     private String savedCardString;
     private int selectedDrawableId;
+    private Intent intent;
+    private RelativeLayout editor;
     final private CardActionsHandler cardHandler = new CardActionsHandler(EditorActivity.this);
+    private NameCardParameters card;
+    private String editedCardName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         touchListener = new OnTouchListener(this);
-        selectedDrawableId = R.drawable.background1;
         setContentView(R.layout.text_input);
         setContentView(R.layout.activity_editor);
+        editor = (RelativeLayout) findViewById(R.id.editor);
+        intent = getIntent();
+        if(intent.getStringExtra("cardNameParam") == null){
+            selectedDrawableId = R.drawable.background1;
+        }else{
+            for(File file : this.getFilesDir().listFiles()){
+                if( intent.getStringExtra("cardNameParam").equals(file.getName())){
+                    String cardToLoad = cardHandler.readCardToString(file);
+                    card = cardHandler.loadCard(cardToLoad);
+                    selectedDrawableId = cardHandler.getCardBackgroundId(cardToLoad);
+                    editedCardName = file.getName();
+                    break;
+                }
+            }
+            editor = cardHandler.generateCardView(editor, card, touchListener);
+
+        }
         Spinner spinner = (Spinner) findViewById(R.id.editor_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.editor_items_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 switch(parent.getItemAtPosition(position).toString()) {
@@ -84,7 +106,6 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
         addButtons();
-        RelativeLayout editor = (RelativeLayout) findViewById(R.id.editor);
         editor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,6 +119,9 @@ public class EditorActivity extends AppCompatActivity {
         builder.setTitle(R.string.card_name);
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        if(editedCardName != null){
+            input.setText(editedCardName);
+        }
         builder.setView(input);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -157,14 +181,17 @@ public class EditorActivity extends AppCompatActivity {
     }
 
     private void addText(int input){
-        final ColorPicker cp = new ColorPicker(EditorActivity.this, 0, 0, 0); //https://android-arsenal.com/details/1/5609
+        final ColorPicker cp = new ColorPicker(EditorActivity.this, 0, 0, 0);
         LayoutInflater vi = LayoutInflater.from(context);
         final View v = vi.inflate(R.layout.text_input, null);
         EditText edt = (EditText) v.findViewById(R.id.textView);
         v.setTag("textInput" + input);
-        RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.textInput);
+        final RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.textInput);
         if(input == TYPE_CLASS_PHONE){
             edt.setText("0000");
+        }
+        if(input == TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS){
+            edt.setText("addEmail");
         }
         edt.setInputType(input);
 
@@ -172,7 +199,7 @@ public class EditorActivity extends AppCompatActivity {
         edt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView tv, int actionId, KeyEvent event) {
-                EditText editTextForValue = (EditText) findViewById(R.id.textView);
+                EditText editTextForValue = (EditText) rl.findViewById(R.id.textView);
                 String editTextValue = (String) editTextForValue.getText().toString();
                 if(editTextValue.length() == 0){
                     inputLayout.removeViewInLayout(v);

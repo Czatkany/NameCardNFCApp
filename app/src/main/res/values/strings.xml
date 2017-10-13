@@ -7,7 +7,7 @@
     <string name="get_cards">GetCards</string>
     <string name="app_options">Options</string>
     <string name="delete_cards">DeleteCards</string>
-    <string name="send_card">eandCard</string>
+    <string name="send_card">SendCard</string>
     <string name="write_tag">WriteTag</string>
     <string name="app_quit">Quit</string>
     <string name="back">Back</string>
@@ -15,7 +15,17 @@
     <string name="card_name">CardName</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="retry">ReTry</string>
     <string name="null_text">The value was null</string>
+    <string name="no_cards">There is no saved cards</string>
+    <string name="nfc_disabled">NFC is currently disabled on this device.</string>
+    <string name="not_supported">This device doesn\'t support NFC.</string>
+    <string name="receiving">Waiting for card data..</string>
+    <string name="sending">Sending card data..</string>
+    <string name="card_saved">Card Saved!</string>
+    <string name="unsupported">Unsupported card format</string>
+    <string name="edit">Edit</string>
+    <string name="open">Open</string>
 
     <string-array name="editor_items_array">
         <item>Menu</item>

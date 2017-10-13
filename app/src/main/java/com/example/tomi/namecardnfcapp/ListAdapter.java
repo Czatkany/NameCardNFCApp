@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static android.R.attr.button;
+
 /**
  * Created by Tomi on 2017. 04. 24..
  */
@@ -42,17 +44,28 @@ public class ListAdapter extends ArrayAdapter<NameCardListElementResource> {
         final String resourceName = context.getResources().getResourceName(p.backGroundId) + "small";
         if (p != null) {
             RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.nameCardListElement);
-            Button button = (Button) v.findViewById(R.id.openCard);
+            Button openButton = (Button) v.findViewById(R.id.openCard);
             TextView text = (TextView) v.findViewById(R.id.cardName);
+            Button editButton = (Button) v.findViewById(R.id.editCard);
 
             if (rl != null) {
                 rl.setBackgroundResource(context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName()));
             }
-            if (button != null) {
-                button.setOnClickListener(new View.OnClickListener() {
+            if (openButton != null) {
+                openButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent cardView = new Intent(context.getApplicationContext(), CardViewActivity.class);
+                        cardView.putExtra("cardNameParam", p.text);
+                        context.startActivity(cardView);
+                    }
+                });
+            }
+            if(editButton != null){
+                editButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent cardView = new Intent(context.getApplicationContext(), EditorActivity.class);
                         cardView.putExtra("cardNameParam", p.text);
                         context.startActivity(cardView);
                     }

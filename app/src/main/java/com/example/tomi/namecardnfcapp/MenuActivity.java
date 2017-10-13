@@ -15,6 +15,7 @@ public class MenuActivity extends AppCompatActivity {
     private Button cardButton;
     private Button quitButton;
     private Button clearDataButton;
+    private Button getCardButton;
     private Context context = MenuActivity.this;
 
     @Override
@@ -25,6 +26,7 @@ public class MenuActivity extends AppCompatActivity {
         cardButton = (Button)findViewById(R.id.cardEditor);
         clearDataButton = (Button) findViewById(R.id.clearData);
         quitButton = (Button)findViewById(R.id.quit);
+        getCardButton = (Button) findViewById(R.id.getCard);
         Onclick();
     }
 
@@ -48,6 +50,13 @@ public class MenuActivity extends AppCompatActivity {
                 for(File file : allFiles){
                     file.delete();
                 }
+            }
+        });
+        getCardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent getCardScreen = new Intent(getApplicationContext(), GetCardActivity.class);
+                startActivity(getCardScreen);
             }
         });
         quitButton.setOnClickListener( new View.OnClickListener() {

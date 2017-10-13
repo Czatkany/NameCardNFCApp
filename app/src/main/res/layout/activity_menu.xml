@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.tomi.namecardapp.com.example.tomi.namecardnfcapp.MenuActivity">
+    tools:context="com.example.tomi.namecardnfcapp.MenuActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -25,6 +25,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/card_editor"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="96dp" />
+        <Button
+            android:id="@+id/getCard"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/get_cards"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="96dp" />
         <Button

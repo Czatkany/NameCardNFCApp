@@ -9,7 +9,7 @@
         android:id="@+id/openCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open"
+        android:text="@string/open"
         >
     </Button>
     <TextView
@@ -19,5 +19,12 @@
         android:layout_alignBaseline="@+id/openCard"
         android:layout_alignBottom="@+id/openCard"
         android:layout_toEndOf="@+id/openCard"
-        android:layout_marginStart="140dp" />
+        android:layout_marginStart="50dp" />
+    <Button
+        android:id="@+id/editCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

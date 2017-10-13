@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
     package="com.example.tomi.namecardnfcapp">
+
     <uses-permission android:name="android.permission.NFC" />
 
     <application
@@ -10,21 +11,26 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.tomi.namecardnfcapp.MenuActivity">
+        <activity android:name=".MenuActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.tomi.namecardnfcapp.ListActivity" />
+        <activity android:name=".ListActivity"
+            android:screenOrientation="portrait"/>
         <activity
-            android:name="com.example.tomi.namecardnfcapp.EditorActivity"
+            android:name=".EditorActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.example.tomi.namecardnfcapp.CardViewActivity"
-            android:screenOrientation="landscape"></activity>
-        <activity android:name="com.example.tomi.namecardnfcapp.NFCActivity"></activity>
+            android:name=".CardViewActivity"
+            android:screenOrientation="landscape" />
+        <activity android:name=".SendCardActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".GetCardActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
