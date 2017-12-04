@@ -26,6 +26,24 @@
     <string name="unsupported">Unsupported card format</string>
     <string name="edit">Edit</string>
     <string name="open">Open</string>
+    <string name="set_card_as_your_card">Set card as Your card?</string>
+    <string name="create_new_card">Create new card</string>
+    <string name="select_card_from_list">Select card from list</string>
+    <string name="delete">Delete</string>
+    <string name="send">Send</string>
+    <string name="set_as_your_card">Set as your card</string>
+    <string name="menu_item_call">Call</string>
+    <string name="menu_item_text">Text</string>
+    <string name="menu_item_email">Email</string>
+    <string name="background">BackGround</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="select_option">Select Option</string>
+    <string name="set_namecard">Set NameCard</string>
+    <string name="edit_text">Edit Text</string>
+    <string name="change_text_size">Changing the text size</string>
+    <string name="choose_a_value">Choose a value:</string>
+    <string name="change_text_font">Change text font</string>
+    <string name="edit_text_field">Edit text field</string>
 
     <string-array name="editor_items_array">
         <item>Menu</item>
@@ -34,5 +52,30 @@
         <item>AddEmail</item>
         <item>Save</item>
         <item>Back</item>
+    </string-array>
+    <string-array name="list_sort_options">
+        <item>Sort namecards</item>
+        <item>Name</item>
+        <item>Picture</item>
+    </string-array>
+    <string-array name="text_edit_options">
+        <item>Edit Text</item>
+        <item>Change Color</item>
+        <item>Change Size</item>
+        <item>Change FontType</item>
+    </string-array>
+    <string-array name="list_options">
+        <item>Open</item>
+        <item>Edit</item>
+        <item>Send</item>
+        <item>Set as your namecard</item>
+        <item>Delete</item>
+    </string-array>
+    <string-array name="fonts">
+        <item>fonts/gtw.ttf</item>
+        <item>fonts/Oswald-Stencbab.ttf</item>
+        <item>fonts/Roboto-Bold.ttf</item>
+        <item>fonts/Roboto-ThinItalic.ttf</item>
+        <item>fonts/RobotoCondensed-Regular.ttf</item>
     </string-array>
 </resources>

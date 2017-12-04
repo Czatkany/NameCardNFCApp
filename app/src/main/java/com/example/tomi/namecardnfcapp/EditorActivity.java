@@ -2,26 +2,21 @@ package com.example.tomi.namecardnfcapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.ColorInt;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;;
-import android.text.InputType;
-import android.view.KeyEvent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.pes.androidmaterialcolorpickerdialog.ColorPicker;
-import com.pes.androidmaterialcolorpickerdialog.ColorPickerCallback;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -37,7 +32,6 @@ public class EditorActivity extends AppCompatActivity {
     private List<Integer> thumbnails;
     private ArrayList<Integer> imageNames;
     private String savedNamecardName;
-    private OnTouchListener touchListener;
     private String savedCardString;
     private int selectedDrawableId;
     private Intent intent;
@@ -48,7 +42,6 @@ public class EditorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        touchListener = new OnTouchListener(this);
         setContentView(R.layout.text_input);
         setContentView(R.layout.activity_editor);
         editor = (RelativeLayout) findViewById(R.id.editor);
@@ -58,18 +51,18 @@ public class EditorActivity extends AppCompatActivity {
         }else{
             for(File file : this.getFilesDir().listFiles()){
                 if( intent.getStringExtra("cardNameParam").equals(file.getName())){
-                    String cardToLoad = cardHandler.readCardToString(file);
+                    String cardToLoad = cardHandler.readCardToStringFromFile(file);
                     card = cardHandler.loadCard(cardToLoad);
                     selectedDrawableId = cardHandler.getCardBackgroundId(cardToLoad);
                     editedCardName = file.getName();
                     break;
                 }
             }
-            editor = cardHandler.generateCardView(editor, card, touchListener);
+            editor = cardHandler.generateCardView(editor, card);
 
         }
-        Spinner spinner = (Spinner) findViewById(R.id.editor_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        final Spinner spinner = (Spinner) findViewById(R.id.editor_spinner);
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.editor_items_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -100,10 +93,7 @@ public class EditorActivity extends AppCompatActivity {
                         break;
                 }
             }
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent){}
         });
         addButtons();
         editor.setOnClickListener(new View.OnClickListener() {
@@ -113,23 +103,30 @@ public class EditorActivity extends AppCompatActivity {
             }
         });
     }
-
+    //Get the name of the card and save it
     private void getNameCardName(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater vi = LayoutInflater.from(context);
+        final View v = vi.inflate(R.layout.save_dialog, null);
         builder.setTitle(R.string.card_name);
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        final EditText input = (EditText) v.findViewById(R.id.saved_card_name);
+        final CheckBox isUserCard = (CheckBox) v.findViewById(R.id.saved_card_checkbox);
         if(editedCardName != null){
             input.setText(editedCardName);
         }
-        builder.setView(input);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(!input.getText().toString().isEmpty()){
-                    savedNamecardName = input.getText().toString();
-                    collectCardData();
-                    cardHandler.writeCardToFile(savedNamecardName, savedCardString);
+                if(!input.getText().toString().isEmpty() || input.getText().toString().length() <= 0){
+                    if(isUserCard.isChecked()){
+                        savedNamecardName = input.getText().toString();
+                        collectCardData();
+                        cardHandler.writeCardToFile(savedNamecardName, savedCardString, isUserCard.isChecked());
+                    }else{
+                        savedNamecardName = input.getText().toString();
+                        collectCardData();
+                        cardHandler.writeCardToFile(savedNamecardName, savedCardString, isUserCard.isChecked());
+                    }
                 }else{
                     Toast.makeText(context, R.string.null_text, Toast.LENGTH_LONG).show();
                     getNameCardName();
@@ -142,26 +139,37 @@ public class EditorActivity extends AppCompatActivity {
                 dialog.cancel();
             }
         });
+        builder.setView(v);
         builder.show();
     }
-
+    //collect carddata for saving
     private void collectCardData(){
         ArrayList<View> textViews = new ArrayList<View>();
         NameCardParameters cardToSave = new NameCardParameters(findViewById(R.id.editor).getBackground());
         textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_CLASS_TEXT));
+        textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_CLASS_TEXT + "underlined"));
         textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_CLASS_PHONE));
+        textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_CLASS_PHONE + "underlined"));
         textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS));
+        textViews.addAll(getViewsByTag((ViewGroup) findViewById(R.id.editor), "textInput" + TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS + "underlined"));
         for(View textField : textViews){
-            EditText textValue = (EditText) textField.findViewById(R.id.textView);
-            RelativeLayout textEditorHolder = (RelativeLayout) textField.findViewById(R.id.textInput);
-            cardToSave.Add(new NameCardTextValue(textField.getTag().toString(), textEditorHolder.getX(), textEditorHolder.getY(), textValue.getText().toString(), textValue.getCurrentTextColor()));
+            EditText textValue = (EditText) textField;
+            String underline = textValue.getTag().toString();
+            boolean isUnderlined = false;
+            if(underline.contains("underlined")){
+                underline = underline.replace("underlined", " ");
+                textValue.setTag(underline);
+                isUnderlined = true;
+            }
+            float size = textValue.getTextSize() / getResources().getDisplayMetrics().scaledDensity;
+            cardToSave.Add(new NameCardTextValue(textField.getTag().toString(), textValue.getX(), textValue.getY(), textValue.getText().toString(), textValue.getCurrentTextColor(), size, textValue.getTypeface().toString(), isUnderlined));
         }
         savedCardString = (selectedDrawableId) + ";";
         for(NameCardTextValue actualText : cardToSave.getTexts()) {
             savedCardString += actualText.Value();
         }
     }
-
+    //Collect editfields for saving
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
         ArrayList<View> views = new ArrayList<View>();
         final int childCount = root.getChildCount();
@@ -179,14 +187,11 @@ public class EditorActivity extends AppCompatActivity {
         }
         return views;
     }
-
-    private void addText(int input){
-        final ColorPicker cp = new ColorPicker(EditorActivity.this, 0, 0, 0);
-        LayoutInflater vi = LayoutInflater.from(context);
-        final View v = vi.inflate(R.layout.text_input, null);
-        EditText edt = (EditText) v.findViewById(R.id.textView);
-        v.setTag("textInput" + input);
-        final RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.textInput);
+    //Add textfield to the cardeditor
+    private void addText(final int input){
+        final EditText edt = new EditText(context);
+        edt.setText("addName");
+        edt.setTag("textInput" + input);
         if(input == TYPE_CLASS_PHONE){
             edt.setText("0000");
         }
@@ -194,42 +199,17 @@ public class EditorActivity extends AppCompatActivity {
             edt.setText("addEmail");
         }
         edt.setInputType(input);
-
+        edt.setTextSize(40);
         final RelativeLayout inputLayout = (RelativeLayout)findViewById(R.id.editor);
-        edt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        edt.setOnTouchListener(new TextEditActions(context, edt){
             @Override
-            public boolean onEditorAction(TextView tv, int actionId, KeyEvent event) {
-                EditText editTextForValue = (EditText) rl.findViewById(R.id.textView);
-                String editTextValue = (String) editTextForValue.getText().toString();
-                if(editTextValue.length() == 0){
-                    inputLayout.removeViewInLayout(v);
-                    return true;
-                }else{
-
-                }
-                return false;
+            public boolean onTouch(View v, MotionEvent event) {
+                return super.onTouch(v, event);
             }
         });
-        edt.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final EditText editTextForValue = (EditText) v.findViewById(R.id.textView);
-                cp.show();
-                cp.setCallback(new ColorPickerCallback() {
-                    @Override
-                    public void onColorChosen(@ColorInt int color) {
-                        editTextForValue.setTextColor(color);
-                        cp.hide();
-                    }
-                });
-                return false;
-            }
-        });
-        rl.setOnTouchListener(touchListener);
-        inputLayout.addView(v);
-
+        inputLayout.addView(edt);
     }
-
+    //Add buttons to the card
     private void addButtons() {
         getImages();
         for(int i = thumbnails.size()-1; i >= 0; i--){
@@ -249,7 +229,7 @@ public class EditorActivity extends AppCompatActivity {
             insertPoint.addView(v, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
         }
     }
-
+    //Get the images from drawable
     private void getImages()  {
         Field[] fields = R.drawable.class.getFields();
         drawables = new ArrayList<Integer>();

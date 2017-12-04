@@ -9,73 +9,53 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static android.R.attr.button;
 
 /**
  * Created by Tomi on 2017. 04. 24..
  */
-
+//This is the custom adapter for the listview
 public class ListAdapter extends ArrayAdapter<NameCardListElementResource> {
 
     private Context context;
     private ArrayList<NameCardListElementResource> cards;
+    private LayoutInflater inflater;
     public ListAdapter(Context context, int textViewResourceId, ArrayList<NameCardListElementResource> _cards) {
         super(context, textViewResourceId, _cards);
         this.context = context;
         this.cards = new ArrayList<NameCardListElementResource>();
         this.cards.addAll(_cards);
+        inflater = LayoutInflater.from(context);
     }
-
-    public View getView(final int position, View convertView, ViewGroup parent) {
-
-        View v = convertView;
-
-        if (v == null) {
-            LayoutInflater vi;
-            vi = (LayoutInflater) context.getSystemService(
-                    Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.list_resource, null);
+    //This function refresh the name text of the namecard if it's selected
+    public void RemoveAllSelected() {
+        for(NameCardListElementResource card : cards){
+            String cardName = card.text;
+            if( cardName.startsWith("<") && cardName.endsWith(">")){
+                cardName = cardName.replace("<", "");
+                cardName = cardName.replace(">", "");
+                card.text = cardName;
+            }
         }
-
+    }
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        /*View v = new View(context);
+                v = convertView;*/
+        if (convertView == null) {
+            convertView = inflater.inflate(android.R.layout.simple_list_item_1, null);
+        }
+        TextView text = (TextView) convertView.findViewById(android.R.id.text1);
         final NameCardListElementResource p = getItem(position);
         final String resourceName = context.getResources().getResourceName(p.backGroundId) + "small";
-        if (p != null) {
-            RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.nameCardListElement);
-            Button openButton = (Button) v.findViewById(R.id.openCard);
-            TextView text = (TextView) v.findViewById(R.id.cardName);
-            Button editButton = (Button) v.findViewById(R.id.editCard);
+        text.setText(p.text);
+        convertView.setBackgroundResource(context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName()));
 
-            if (rl != null) {
-                rl.setBackgroundResource(context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName()));
-            }
-            if (openButton != null) {
-                openButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent cardView = new Intent(context.getApplicationContext(), CardViewActivity.class);
-                        cardView.putExtra("cardNameParam", p.text);
-                        context.startActivity(cardView);
-                    }
-                });
-            }
-            if(editButton != null){
-                editButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent cardView = new Intent(context.getApplicationContext(), EditorActivity.class);
-                        cardView.putExtra("cardNameParam", p.text);
-                        context.startActivity(cardView);
-                    }
-                });
-            }
-            if(text != null){
-                text.setText(p.text);
-            }
-        }
-
-        return v;
+        return convertView;
     }
 }

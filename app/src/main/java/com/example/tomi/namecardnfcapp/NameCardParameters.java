@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by Tomi on 2017. 04. 29..
  */
-
+//This class represent a namecard as an object
 public class NameCardParameters {
     private Drawable background;
     private ArrayList<NameCardTextValue> texts;
